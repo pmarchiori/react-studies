@@ -1,0 +1,29 @@
+.informations_container {
+  padding: 5px 10px;
+}
+
+.informations_container h3 {
+  font-weight: 400;
+}
+
+/* .container_cards_info {
+} */
+
+.card_info {
+  display: flex;
+  padding: 5px 10px;
+  margin-top: 20px;
+}
+
+.card_info .title {
+  font-weight: bold;
+}
+
+.card_info .card_text {
+  padding: 20px;
+}
+
+.card_info .card_text .description {
+  margin-top: 30px;
+  margin-bottom: 40px;
+}

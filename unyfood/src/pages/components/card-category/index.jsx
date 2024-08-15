@@ -1,6 +1,7 @@
 import "./styles.css";
 
-import img from "../../../imgs/img1.svg";
+import img1 from "../../../imgs/img1.svg";
+import img2 from "../../../imgs/img2.svg";
 
 export default function CardCategory(props) {
   return (
@@ -15,7 +16,7 @@ export default function CardCategory(props) {
         <button>Ver opções</button>
       </div>
       <div>
-        <img src={img} />
+        <img height="150px" src={props.title === "Comidas" ? img1 : img2} />
       </div>
     </div>
   );

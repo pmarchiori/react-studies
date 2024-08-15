@@ -1,0 +1,9 @@
+.restaurants_container {
+  padding: 5px 10px;
+  margin-top: 50px;
+}
+
+.see_more {
+  text-align: right;
+  color: #f57d00;
+}

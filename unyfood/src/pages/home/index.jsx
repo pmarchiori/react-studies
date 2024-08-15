@@ -1,6 +1,9 @@
 import CardCategory from "../components/card-category";
 import Header from "../components/header";
 import Search from "../components/search";
+import Restaurants from "../components/restaurants";
+import Informations from "../components/informations";
+import Footer from "../components/footer";
 
 import "./styles.css";
 
@@ -16,8 +19,11 @@ export default function Home() {
         <CardCategory title="Bebidas" />
       </div>
 
-      <h1>Home</h1>
-      <p>Paragraph</p>
+      <Restaurants />
+
+      <Informations />
+
+      <Footer />
     </div>
   );
 }

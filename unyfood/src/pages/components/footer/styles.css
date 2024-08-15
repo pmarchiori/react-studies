@@ -1,0 +1,12 @@
+.footer_div {
+  background-color: #f57d00;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.footer_p {
+  color: white;
+}

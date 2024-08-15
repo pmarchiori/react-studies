@@ -1,16 +1,17 @@
 .btn {
   background-color: #f57d00;
   border: 0;
-  padding: 5px;
-  border-radius: 3px;
+  padding: 10px;
+  border-radius: 5px;
   color: #fff;
   transition: 0.3s ease all;
   cursor: pointer;
 }
+
 .btn:hover {
-  background-color: #3f3f3f;
+  background-color: #8f4d07;
   border: 0;
-  padding: 5px;
-  border-radius: 3px;
+  padding: 10px;
+  border-radius: 10px;
   color: #fff;
 }
