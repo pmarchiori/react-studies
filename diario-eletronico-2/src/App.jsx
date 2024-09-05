@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { FiEdit } from "react-icons/fi";
 import { BsTrash3Fill } from "react-icons/bs";
+import axios from "axios";
 
 import styles from "./app.module.css";
 
 export default function App() {
   const [alunos, setAlunos] = useState([]);
+  const [cursos, setCursos] = useState([]);
   const [indexSelecionado, setIndexSelecionado] = useState(-1);
   const [formData, setFormData] = useState({
     nome: "",
@@ -15,59 +17,54 @@ export default function App() {
     bimestre: "",
   });
 
-  function addAluno(event) {
+  async function addAluno(event) {
     event.preventDefault();
 
-    if (
-      formData.nome === "" ||
-      formData.matricula === "" ||
-      formData.curso === "" ||
-      formData.bimestre === ""
-    ) {
-      alert("Informe todos os dados do aluno!");
-    } else {
-      setAlunos([...alunos, formData]);
-
-      setFormData({ nome: "", matricula: "", curso: "", bimestre: "" });
-      //console.log(formData);
+    try {
+      await axios.post("https://api-aluno.vercel.app/aluno", {
+        nome: formData.nome,
+        matricula: formData.matricula,
+        curso: formData.curso,
+        bimestre: formData.bimestre,
+      });
+      buscarAlunos();
+      alert("Sucesso ao salvar aluno");
+    } catch (error) {
+      alert("Erro ao salvar aluno");
     }
   }
 
-  function removerAluno(posicaoArray) {
-    const alunosFiltrados = alunos.filter(
-      (aluno, index) => posicaoArray != +index
-    );
+  function removerAluno(posicaoArray) {}
 
-    setAlunos(alunosFiltrados);
+  function preencherFormulario(aluno, index) {}
 
-    setFormData({ nome: "", matricula: "", curso: "", bimestre: "" });
+  function editarAluno(event) {}
 
-    setIndexSelecionado(-1);
+  async function buscarAlunos() {
+    try {
+      const response = await axios.get("https://api-aluno.vercel.app/aluno");
+      setAlunos(response.data);
+    } catch (error) {
+      alert("Erro ao buscar dados dos alunos");
+    }
   }
 
-  function preencherFormulario(aluno, index) {
-    setIndexSelecionado(index);
-    setFormData({
-      nome: aluno.nome,
-      matricula: aluno.matricula,
-      curso: aluno.curso,
-      bimestre: aluno.bimestre,
-    });
+  async function buscarCursos() {
+    try {
+      const response = await axios.get("https://api-aluno.vercel.app/cursos");
+      setCursos(response.data.cursos);
+    } catch (error) {
+      alert("Erro ao buscar cursos");
+    }
   }
 
-  function editarAluno(event) {
-    event.preventDefault();
-    const copiaAlunos = [...alunos];
+  useEffect(() => {
+    buscarAlunos();
+  }, []);
 
-    copiaAlunos[indexSelecionado].nome = formData.nome;
-    copiaAlunos[indexSelecionado].matricula = formData.matricula;
-    copiaAlunos[indexSelecionado].curso = formData.curso;
-    copiaAlunos[indexSelecionado].bimestre = formData.bimestre;
-
-    setAlunos(copiaAlunos);
-    setFormData({ nome: "", matricula: "", curso: "", bimestre: "" });
-    setIndexSelecionado(-1);
-  }
+  useEffect(() => {
+    buscarCursos();
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -95,13 +92,18 @@ export default function App() {
           }
         />
 
-        <input
+        <select
           placeholder="Curso"
           value={formData.curso}
           onChange={(event) =>
             setFormData({ ...formData, curso: event.target.value })
           }
-        />
+        >
+          <option>Selecione um curso</option>
+          {cursos.map((curso) => (
+            <option key={curso.id}>{curso.name}</option>
+          ))}
+        </select>
 
         <input
           placeholder="Bimestre"
