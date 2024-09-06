@@ -3,13 +3,29 @@ import { useEffect, useState } from "react";
 import { FiEdit } from "react-icons/fi";
 import { BsTrash3Fill } from "react-icons/bs";
 import axios from "axios";
+import Modal from "react-modal";
 
 import styles from "./app.module.css";
 
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+  },
+};
+
+Modal.setAppElement("#root");
+
 export default function App() {
+  const [visibilidadeModal, setVisibilidadeModal] = useState(false);
+
   const [alunos, setAlunos] = useState([]);
   const [cursos, setCursos] = useState([]);
-  const [indexSelecionado, setIndexSelecionado] = useState(-1);
+  const [idSelecionado, setIdSelecionado] = useState("");
   const [formData, setFormData] = useState({
     nome: "",
     matricula: "",
@@ -34,11 +50,46 @@ export default function App() {
     }
   }
 
-  function removerAluno(posicaoArray) {}
+  async function removerAluno() {
+    try {
+      await axios.delete(`https://api-aluno.vercel.app/aluno/${idSelecionado}`);
+      buscarAlunos();
+      alert("Sucesso ao remover aluno");
+      setIdSelecionado("");
+      setVisibilidadeModal(false);
+    } catch (error) {
+      alert("Erro ao remover aluno");
+    }
+  }
 
-  function preencherFormulario(aluno, index) {}
+  function preencherFormulario(aluno) {
+    setFormData({
+      nome: aluno.nome,
+      matricula: aluno.matricula,
+      curso: aluno.curso,
+      bimestre: aluno.bimestre,
+    });
 
-  function editarAluno(event) {}
+    setIdSelecionado(aluno._id);
+  }
+
+  async function editarAluno(event) {
+    event.preventDefault();
+    try {
+      await axios.put(`https://api-aluno.vercel.app/aluno/${idSelecionado}`, {
+        nome: formData.nome,
+        matricula: formData.matricula,
+        curso: formData.curso,
+        bimestre: formData.bimestre,
+      });
+      setFormData({ nome: "", matricula: "", curso: "", bimestre: "" });
+      setIdSelecionado("");
+      alert("Aluno editado com sucesso!");
+      buscarAlunos();
+    } catch (error) {
+      alert("Erro ao editar dados do aluno");
+    }
+  }
 
   async function buscarAlunos() {
     try {
@@ -73,7 +124,7 @@ export default function App() {
       <form
         className={styles.form}
         onSubmit={(event) =>
-          indexSelecionado >= 0 ? editarAluno(event) : addAluno(event)
+          idSelecionado !== "" ? editarAluno(event) : addAluno(event)
         }
       >
         <input
@@ -121,36 +172,43 @@ export default function App() {
 
         {alunos.length > 0 ? (
           <table className={styles.table}>
-            <tr>
-              <th>Ordem</th>
-              <th>Nome</th>
-              <th>Matrícula</th>
-              <th>Curso</th>
-              <th>Bimestre</th>
-              <th>Ações</th>
-            </tr>
-
-            {alunos.map((aluno, index) => (
+            <thead>
               <tr>
-                <td className={styles.center}>{index + 1}</td>
-                <td>{aluno.nome}</td>
-                <td>{aluno.matricula}</td>
-                <td>{aluno.curso}</td>
-                <td className={styles.center}>{aluno.bimestre}</td>
-                <td className={styles.center}>
-                  <FiEdit
-                    color="#0FBA3F"
-                    cursor="pointer"
-                    onClick={() => preencherFormulario(aluno, index)}
-                  />
-                  <BsTrash3Fill
-                    color="#F90000"
-                    cursor="pointer"
-                    onClick={() => removerAluno(index)}
-                  />
-                </td>
+                <th>Ordem</th>
+                <th>Nome</th>
+                <th>Matrícula</th>
+                <th>Curso</th>
+                <th>Bimestre</th>
+                <th>Ações</th>
               </tr>
-            ))}
+            </thead>
+
+            <tbody>
+              {alunos.map((aluno, index) => (
+                <tr key={aluno._id}>
+                  <td className={styles.center}>{index + 1}</td>
+                  <td>{aluno.nome}</td>
+                  <td>{aluno.matricula}</td>
+                  <td>{aluno.curso}</td>
+                  <td className={styles.center}>{aluno.bimestre}</td>
+                  <td className={styles.center}>
+                    <FiEdit
+                      color="#0FBA3F"
+                      cursor="pointer"
+                      onClick={() => preencherFormulario(aluno)}
+                    />
+                    <BsTrash3Fill
+                      color="#F90000"
+                      cursor="pointer"
+                      onClick={() => {
+                        setIdSelecionado(aluno._id);
+                        setVisibilidadeModal(true);
+                      }}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         ) : (
           <h4>Nenhum aluno cadastrado</h4>
@@ -162,6 +220,26 @@ export default function App() {
           <p>{aluno.nome}</p>
         ))} */}
       </div>
+      <Modal
+        isOpen={visibilidadeModal}
+        style={customStyles}
+        onRequestClose={() => {
+          setVisibilidadeModal(false);
+          setIdSelecionado("");
+        }}
+      >
+        <h2 style={{ color: "#000" }}>Confirmação</h2>
+        <p style={{ color: "#000" }}>Deseja remover o item selecionado?</p>
+        <button onClick={removerAluno}>Sim</button>
+        <button
+          onClick={() => {
+            setVisibilidadeModal(false);
+            setIdSelecionado("");
+          }}
+        >
+          Não
+        </button>
+      </Modal>
     </div>
   );
 }
