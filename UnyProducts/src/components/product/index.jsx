@@ -1,12 +1,17 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
+import styles from "./styles.module.css";
 
 export default function Product(props) {
   return (
-    <div>
-      <p>{props.produto.nome}</p>
-      <img src={props.produto.img} />
-      <p>{props.produto.fabricante}</p>
-      <p>{props.produto.preco}</p>
-    </div>
+    <Link to={`/detalhes/${props.produto._id}`}>
+      <div className={styles.card}>
+        <p>{props.produto.nome}</p>
+        <img src={props.produto.url_imagem} />
+        <p>{props.produto.fornecedor}</p>
+        <p>{props.produto.preco}</p>
+      </div>
+    </Link>
   );
 }
